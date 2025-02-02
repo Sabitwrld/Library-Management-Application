@@ -11,8 +11,6 @@ namespace Library_Management_Application.Repository.Implementations
 {
     public class BookRepository : GenericRepository<Book>, IBookRepository
     {
-        public BookRepository(AppDbContext context) : base(context)
-        {
-        }
+
     }
 }

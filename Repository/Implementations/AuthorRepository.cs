@@ -6,8 +6,6 @@ namespace Library_Management_Application.Repository.Implementations
 {
     public class AuthorRepository : GenericRepository<Author>, IAuthorRepository
     {
-        public AuthorRepository(AppDbContext context) : base(context)
-        {
-        }
+       
     }
 }

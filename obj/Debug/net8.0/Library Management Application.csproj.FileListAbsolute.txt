@@ -129,3 +129,4 @@ D:\visual-studio\Library Management Application\obj\Debug\net8.0\refint\Library 
 D:\visual-studio\Library Management Application\obj\Debug\net8.0\Library Management Application.pdb
 D:\visual-studio\Library Management Application\obj\Debug\net8.0\Library Management Application.genruntimeconfig.cache
 D:\visual-studio\Library Management Application\obj\Debug\net8.0\ref\Library Management Application.dll
+D:\visual-studio\Library Management Application\obj\Debug\net8.0\Library Management Application.sourcelink.json

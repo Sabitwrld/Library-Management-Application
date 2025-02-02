@@ -11,8 +11,6 @@ namespace Library_Management_Application.Repository.Implementations
 {
     public class LoanItemRepository : GenericRepository<LoanItem>, ILoanItemRepository
     {
-        public LoanItemRepository(AppDbContext context) : base(context)
-        {
-        }
+
     }
 }

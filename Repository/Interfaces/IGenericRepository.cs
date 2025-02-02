@@ -1,4 +1,5 @@
-﻿using Library_Management_Application.Entities.Common;
+﻿using Library_Management_Application.Entities;
+using Library_Management_Application.Entities.Common;
 
 namespace Library_Management_Application.Repository.Interfaces
 {

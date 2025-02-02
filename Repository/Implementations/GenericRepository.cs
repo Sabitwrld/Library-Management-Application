@@ -8,27 +8,24 @@ namespace Library_Management_Application.Repository.Implementations
     {
         private readonly AppDbContext _context;
 
-        public GenericRepository(AppDbContext context)
+        public GenericRepository()
         {
-            _context = context;
+            _context = new AppDbContext();
         }
 
         public void Add(T entity)
         {
             _context.Set<T>().Add(entity);
-            Commit();
         }
 
         public void Update(int id, T entity)
         {
             _context.Set<T>().Update(entity);
-            Commit();
         }
 
         public void Remove(T entity)
         {
             _context.Set<T>().Remove(entity);
-            Commit();
         }
 
         public List<T> GetAll()

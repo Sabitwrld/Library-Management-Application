@@ -11,8 +11,5 @@ namespace Library_Management_Application.Repository.Implementations
 {
     public class BorrowerRepository : GenericRepository<Borrower>, IBorrowerRepository
     {
-        public BorrowerRepository(AppDbContext context) : base(context)
-        {
-        }
     }
 }

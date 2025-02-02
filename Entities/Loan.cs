@@ -10,6 +10,6 @@ namespace Library_Management_Application.Entities
         public DateTime LoanDate { get; set; }
         public DateTime MustReturnDate { get; set; }
         public DateTime? ReturnDate { get; set; }
-        public DbSet<LoanItem> LoanItems { get; set; }
+        public List<LoanItem> LoanItems { get; set; }
     }
 }
