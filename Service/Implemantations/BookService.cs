@@ -1,4 +1,5 @@
-﻿using Library_Management_Application.Entities;
+﻿using Library_Management_Application.Data;
+using Library_Management_Application.Entities;
 using Library_Management_Application.PB503LibraryExceptions;
 using Library_Management_Application.Repository.Implementations;
 using Library_Management_Application.Repository.Interfaces;
@@ -17,21 +18,37 @@ namespace Library_Management_Application.Service.Implemantations
         public void Create(Book book)
         {
             if (book is null)
-                throw new EntityNotFoundException($"{book} is not exists");
+                throw new Exception("Book cannot be null.");
 
-            _bookRepository.Add(book);
+            if (book.Authors is null)
+                book.Authors = new List<Author>();
+
+            if (!book.Authors.Any())
+                throw new Exception("A book must have at least one author.");
+
+            var newBook = new Book
+            {
+                Title = book.Title,
+                Desc = book.Desc,
+                PublishedYear = book.PublishedYear,
+                Authors = book.Authors,
+                CreatedAt = DateTime.UtcNow.AddHours(4),
+                UpdatedAt = DateTime.UtcNow.AddHours(4)
+            };
+
+            _bookRepository.Add(newBook);
             _bookRepository.Commit();
         }
+
 
         public void Delete(int? id)
         {
             if (id is null || id < 0)
-                throw new EntityNotFoundException($"{id} is not exists");
+                throw new EntityNotFoundException("Invalid book ID");
 
             var existsBook = _bookRepository.GetById((int)id);
-
             if (existsBook is null)
-                throw new EntityNotFoundException($"{existsBook} is not exists");
+                throw new EntityNotFoundException($"Book with ID {id} not found");
 
             _bookRepository.Remove(existsBook);
             _bookRepository.Commit();
@@ -39,18 +56,21 @@ namespace Library_Management_Application.Service.Implemantations
 
         public List<Book> GetAll()
         {
-            return _bookRepository.GetAll().ToList();
+            return _bookRepository
+                .GetAll()
+                .ToList();
         }
 
         public Book GetById(int? id)
         {
             if (id is null || id < 0)
-                throw new EntityNotFoundException($"{id} is not exists");
+                throw new EntityNotFoundException("Invalid book ID");
 
             var existsBook = _bookRepository.GetById((int)id);
 
             if (existsBook is null)
-                throw new EntityNotFoundException($"{existsBook} is not exists");
+                throw new EntityNotFoundException($"Book with ID {id} not found");
+
             return existsBook;
         }
 
@@ -61,13 +81,17 @@ namespace Library_Management_Application.Service.Implemantations
 
             var existingBook = _bookRepository.GetById((int)id);
             if (existingBook is null)
-                throw new EntityNotFoundException("Book does not exist");
+                throw new EntityNotFoundException($"Book with ID {id} not found");
+
+            if (book is null)
+                throw new EntityNotFoundException("Book cannot be null");
 
             existingBook.Title = book.Title;
             existingBook.Desc = book.Desc;
             existingBook.PublishedYear = book.PublishedYear;
             existingBook.Authors = book.Authors;
-            _bookRepository.Update((int)id, existingBook);
+            existingBook.UpdatedAt = DateTime.UtcNow.AddHours(4);
+
             _bookRepository.Commit();
         }
     }

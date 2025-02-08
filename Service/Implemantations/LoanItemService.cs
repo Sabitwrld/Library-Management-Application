@@ -10,22 +10,26 @@ namespace Library_Management_Application.Service.Implemantations
     public class LoanItemService : ILoanItemService
     {
         private readonly ILoanItemRepository _loanItemRepository;
-        private readonly AppDbContext _context;
+        private readonly IBookRepository _bookRepository;
+        private readonly ILoanRepository _loanRepository;
+
         public LoanItemService()
         {
             _loanItemRepository = new LoanItemRepository();
+            _bookRepository = new BookRepository();
+            _loanRepository = new LoanRepository();
         }
 
         public void Create(LoanItem loanItem)
         {
             if (loanItem is null)
-                throw new EntityNotFoundException("LoanItem entity cannot be null");
+                throw new EntityNotFoundException("LoanItem cannot be null");
 
-            var existsBook = _context.Books.FirstOrDefault(x => x.Id == loanItem.BookId);
+            var existsBook = _bookRepository.GetById(loanItem.BookId);
             if (existsBook is null)
                 throw new EntityNotFoundException("Book does not exist");
 
-            var existsLoan = _context.Loans.FirstOrDefault(x => x.Id == loanItem.Id);
+            var existsLoan = _loanRepository.GetById(loanItem.LoanId);
             if (existsLoan is null)
                 throw new EntityNotFoundException("Loan does not exist");
 
@@ -40,7 +44,7 @@ namespace Library_Management_Application.Service.Implemantations
 
             var loanItem = _loanItemRepository.GetById((int)id);
             if (loanItem is null)
-                throw new EntityNotFoundException("Loan item does not exist");
+                throw new EntityNotFoundException($"Loan item with ID {id} does not exist");
 
             _loanItemRepository.Remove(loanItem);
             _loanItemRepository.Commit();
@@ -54,12 +58,12 @@ namespace Library_Management_Application.Service.Implemantations
         public LoanItem GetById(int? id)
         {
             if (id is null || id < 0)
-                throw new EntityNotFoundException($"{id} is not exists");
+                throw new EntityNotFoundException("Invalid loan item ID");
 
             var existsLoanItem = _loanItemRepository.GetById((int)id);
-
             if (existsLoanItem is null)
-                throw new EntityNotFoundException($"{existsLoanItem} is not exists");
+                throw new EntityNotFoundException($"Loan item with ID {id} does not exist");
+
             return existsLoanItem;
         }
 
@@ -70,11 +74,11 @@ namespace Library_Management_Application.Service.Implemantations
 
             var existingLoanItem = _loanItemRepository.GetById((int)id);
             if (existingLoanItem is null)
-                throw new EntityNotFoundException("Loan item does not exist");
+                throw new EntityNotFoundException($"Loan item with ID {id} does not exist");
 
             existingLoanItem.BookId = loanItem.BookId;
             existingLoanItem.LoanId = loanItem.LoanId;
-            _loanItemRepository.Update((int)id, existingLoanItem);
+
             _loanItemRepository.Commit();
         }
     }

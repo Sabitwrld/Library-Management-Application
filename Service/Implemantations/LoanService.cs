@@ -10,23 +10,26 @@ namespace Library_Management_Application.Service.Implemantations
     public class LoanService : ILoanService
     {
         private readonly ILoanRepository _loanRepository;
-        private readonly AppDbContext _context;
+        private readonly IBorrowerRepository _borrowerRepository;
+
         public LoanService()
         {
             _loanRepository = new LoanRepository();
+            _borrowerRepository = new BorrowerRepository();
         }
 
         public void Create(Loan loan)
         {
             if (loan is null)
-                throw new EntityNotFoundException($"{loan} is not exists");
+                throw new EntityNotFoundException("Loan cannot be null");
 
-            var existsBorrower = _context.Loans.FirstOrDefault(X => X.Id == loan.Id);
+            var existsBorrower = _borrowerRepository.GetById(loan.BorrowerId);
             if (existsBorrower is null)
                 throw new EntityNotFoundException("Borrower does not exist");
 
             loan.LoanDate = DateTime.UtcNow.AddHours(4);
             loan.MustReturnDate = loan.LoanDate.AddDays(15);
+
             _loanRepository.Add(loan);
             _loanRepository.Commit();
         }
@@ -34,12 +37,11 @@ namespace Library_Management_Application.Service.Implemantations
         public void Delete(int? id)
         {
             if (id is null || id < 0)
-                throw new EntityNotFoundException($"{id} is not exists");
+                throw new EntityNotFoundException("Invalid loan ID");
 
             var existsLoan = _loanRepository.GetById((int)id);
-
             if (existsLoan is null)
-                throw new EntityNotFoundException($"{existsLoan} is not exists");
+                throw new EntityNotFoundException($"Loan with ID {id} not found");
 
             _loanRepository.Remove(existsLoan);
             _loanRepository.Commit();
@@ -53,12 +55,12 @@ namespace Library_Management_Application.Service.Implemantations
         public Loan GetById(int? id)
         {
             if (id is null || id < 0)
-                throw new EntityNotFoundException($"{id} is not exists");
+                throw new EntityNotFoundException("Invalid loan ID");
 
             var existsLoan = _loanRepository.GetById((int)id);
-            
             if (existsLoan is null)
-                throw new EntityNotFoundException($"{existsLoan} is not exists");
+                throw new EntityNotFoundException($"Loan with ID {id} not found");
+
             return existsLoan;
         }
 
@@ -69,11 +71,12 @@ namespace Library_Management_Application.Service.Implemantations
 
             var existingLoan = _loanRepository.GetById((int)id);
             if (existingLoan is null)
-                throw new EntityNotFoundException("Loan does not exist");
+                throw new EntityNotFoundException($"Loan with ID {id} not found");
 
             existingLoan.ReturnDate = loan.ReturnDate;
             existingLoan.LoanItems = loan.LoanItems;
-            _loanRepository.Update((int)id, existingLoan);
+            existingLoan.UpdatedAt = DateTime.UtcNow.AddHours(4);
+
             _loanRepository.Commit();
         }
     }

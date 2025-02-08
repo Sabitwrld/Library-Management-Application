@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Library_Management_Application.Service.Interfaces
 {
-    public interface IBorrewerService
+    public interface IBorrowerService
     {
         void Create(Borrower borrower);
         void Update(int? id, Borrower borrower);

@@ -14,33 +14,22 @@ namespace Library_Management_Application.Repository.Implementations
         }
 
         public void Add(T entity)
-        {
-            _context.Set<T>().Add(entity);
-        }
-
-        public void Update(int id, T entity)
-        {
-            _context.Set<T>().Update(entity);
-        }
+        => _context.Set<T>().Add(entity);
 
         public void Remove(T entity)
-        {
-            _context.Set<T>().Remove(entity);
-        }
+        => entity.IsDeleted = true;
 
         public List<T> GetAll()
-        {
-            return _context.Set<T>().ToList();
-        }
+        => _context.Set<T>()
+            .Where(t => !t.IsDeleted)
+            .ToList();
+        
 
         public T GetById(int id)
-        {
-            return _context.Set<T>().FirstOrDefault(x => x.Id == id);
-        }
+        => _context.Set<T>().FirstOrDefault(x => x.Id == id);
+
 
         public int Commit()
-        {
-            return _context.SaveChanges();
-        }
+        => _context.SaveChanges();  
     }
 }

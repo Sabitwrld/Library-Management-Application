@@ -18,24 +18,30 @@ namespace Library_Management_Application.Service.Implemantations
         public void Create(Author author)
         {
             if (author is null)
-                throw new EntityNotFoundException($"{author} is not exists");
+                throw new EntityNotFoundException("Author cannot be null");
 
-            if (!string.IsNullOrWhiteSpace(author.Name))
-                throw new EntityNotFoundException($"{author.Name} is not exists");
+            if (string.IsNullOrWhiteSpace(author.Name))
+                throw new EntityNotFoundException("Author name cannot be empty");
 
-            _authorRepository.Add(author);
+            var newAuthor = new Author
+            {
+                Name = author.Name,
+                CreatedAt = DateTime.UtcNow.AddHours(4),
+                UpdatedAt = DateTime.UtcNow.AddHours(4)
+            };
+
+            _authorRepository.Add(newAuthor);
             _authorRepository.Commit();
         }
 
         public void Delete(int? id)
         {
             if (id is null || id < 0)
-                throw new EntityNotFoundException($"{id} is not exists");
-            
+                throw new EntityNotFoundException("Invalid author ID");
+
             var existsAuthor = _authorRepository.GetById((int)id);
-            
             if (existsAuthor is null)
-                throw new EntityNotFoundException($"{existsAuthor} is not exists");
+                throw new EntityNotFoundException($"Author with ID {id} not found");
 
             _authorRepository.Remove(existsAuthor);
             _authorRepository.Commit();
@@ -43,17 +49,20 @@ namespace Library_Management_Application.Service.Implemantations
 
         public List<Author> GetAll()
         {
-            return _authorRepository.GetAll().ToList();
+            return _authorRepository
+                .GetAll()
+                .ToList();
         }
 
         public Author GetById(int? id)
         {
             if (id is null || id < 0)
-                throw new EntityNotFoundException($"{id} is not exists");
+                throw new EntityNotFoundException("Invalid author ID");
 
             var existsAuthor = _authorRepository.GetById((int)id);
+
             if (existsAuthor is null)
-                throw new EntityNotFoundException($"{existsAuthor} is not exists");
+                throw new EntityNotFoundException($"Author with ID {id} not found");
 
             return existsAuthor;
         }
@@ -61,28 +70,22 @@ namespace Library_Management_Application.Service.Implemantations
         public void Update(int? id, Author author)
         {
             if (id is null || id < 0)
-                throw new EntityNotFoundException($"{id} is not exists");
+                throw new EntityNotFoundException("Invalid author ID");
 
             var existsAuthor = _authorRepository.GetById((int)id);
+            if (existsAuthor is null)
+                throw new EntityNotFoundException($"Author with ID {id} not found");
 
             if (author is null)
-                throw new EntityNotFoundException($"{author} is not exists");
+                throw new EntityNotFoundException("Author cannot be null");
 
-            if (!string.IsNullOrWhiteSpace(author.Name))
-                throw new EntityNotFoundException($"{author.Name} is not exists");
+            if (string.IsNullOrWhiteSpace(author.Name))
+                throw new EntityNotFoundException("Author name cannot be empty");
 
             existsAuthor.Name = author.Name;
-            existsAuthor.Books = author.Books;
-            _authorRepository.Update((int)id, existsAuthor);
+            existsAuthor.UpdatedAt = DateTime.UtcNow.AddHours(4);
+
+            _authorRepository.Commit();
         }
-
-
-
-        //private Author CheckId(int? id)
-        //{
-        //    if (id is null)
-        //        throw new EntityNotFoundException($"{id} is not exists");
-        //    var exists = _repository.GetById((int)id);
-        //}
     }
 }
